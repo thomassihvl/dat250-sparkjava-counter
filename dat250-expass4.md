@@ -18,6 +18,7 @@ break hehe...
 I completed the code and made sure the tests were green. The code is not pretty, lots of it is redundant.
 But I've used a lot of time and learned a lot, so I'll say it's good enough.
 
+Link to [repo](https://github.com/thomassihvl/dat250-sparkjava-counter)
 
 
 
