@@ -1,5 +1,7 @@
 package no.hvl.dat250.rest.todos;
 
+import com.google.gson.Gson;
+
 import java.util.Objects;
 
 public class Todo {
@@ -33,6 +35,15 @@ public class Todo {
     }
 
     // Do not change equals and hashcode!
+
+    String toJson () {
+
+        Gson gson = new Gson();
+
+        String jsonInString = gson.toJson(this);
+
+        return jsonInString;
+    }
 
     @Override
     public boolean equals(Object o) {
