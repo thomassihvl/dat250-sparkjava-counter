@@ -7,6 +7,10 @@ import java.util.ArrayList;
 
 import static spark.Spark.*;
 
+import spark.Filter;
+import spark.Request;
+import spark.Response;
+
 /**
  * Rest-Endpoint.
  */
@@ -34,17 +38,43 @@ public class TodoAPI {
     }
 
     public static void main(String[] args) {
+
         if (args.length > 0) {
             port(Integer.parseInt(args[0]));
         } else {
-            port(8000);
+            port(8080);
         }
 
         todos = new ArrayList<Todo>();
         idCounter = 0;
 
+        options("/*",
+                (request, response) -> {
+
+                    String accessControlRequestHeaders = request
+                            .headers("Access-Control-Request-Headers");
+                    if (accessControlRequestHeaders != null) {
+                        response.header("Access-Control-Allow-Headers",
+                                accessControlRequestHeaders);
+                    }
+
+                    String accessControlRequestMethod = request
+                            .headers("Access-Control-Request-Method");
+                    if (accessControlRequestMethod != null) {
+                        response.header("Access-Control-Allow-Methods",
+                                accessControlRequestMethod);
+                    }
+
+                    return "OK";
+                });
+
         after((req, res) -> {
             res.type("application/json");
+            res.header("Access-Control-Allow-Origin", "*");
+            res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+            //res.header("Access-Control-Allow-Methods", "POST");
+            //res.header("Access-Control-Allow-Methods", "PUT");
+            //res.header("Access-Control-Allow-Methods", "DELETE");
         });
 
 
@@ -112,7 +142,8 @@ public class TodoAPI {
             }
 
             // add new todo
-            Todo newTodo = gson.fromJson(req.body(), Todo.class);
+            String newTodoJson = "{id:"+id+",\n"+req.body().substring(1);
+            Todo newTodo = gson.fromJson(newTodoJson, Todo.class);
             todos.add(newTodo);
 
             // Find and return new todo
@@ -143,7 +174,7 @@ public class TodoAPI {
             if (todo != null) {
                 todos.remove(todo);
             }
-            return todo;
+            return todo.toJson();
         });
     }
 }
